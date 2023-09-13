@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hmdp.mapper.SeckillVoucherMapper">
+
+    <resultMap type="com.hmdp.entity.SeckillVoucher" id="TbSeckillVoucherMap">
+        <result property="voucherId" column="voucher_id" jdbcType="INTEGER"/>
+        <result property="stock" column="stock" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="beginTime" column="begin_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <update id="updateVoucher">
+        update `hm-dianping`.tb_seckill_voucher
+        set stock = stock - 1 where voucher_id = #{voucherId} and stock > 0
+    </update>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TbSeckillVoucherMap">
+        select `hm-dianping`.tb_seckill_voucher.voucher_id, stock, create_time, begin_time, end_time, update_time
+        from `hm-dianping`.tb_seckill_voucher
+        where voucher_id = #{voucherId}
+    </select>
+</mapper>
+
