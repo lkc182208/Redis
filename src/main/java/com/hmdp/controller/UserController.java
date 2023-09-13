@@ -47,7 +47,7 @@ public class UserController {
      */
     @PostMapping("/code")
     public Result sendCode(@RequestParam("phone") String phone, HttpSession session) {
-        // TODO 发送短信验证码并保存验证码
+        //
         return userService.saveCode(phone,session);
     }
 
@@ -57,7 +57,7 @@ public class UserController {
      */
     @PostMapping("/login")
     public Result login(@RequestBody LoginFormDTO loginForm){
-        // TODO 实现登录功能
+        //
         return userService.login(loginForm);
     }
 
@@ -67,7 +67,7 @@ public class UserController {
      */
     @PostMapping("/logout")
     public Result logout(HttpServletRequest request){
-        // TODO 实现登出功能
+        //
         String token = request.getHeader("authorization");
         cacheService.delete(RedisConstants.LOGIN_USER_KEY+token);
         return Result.ok();
