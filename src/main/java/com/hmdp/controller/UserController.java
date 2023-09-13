@@ -1,11 +1,9 @@
 package com.hmdp.controller;
 
 
-import cn.hutool.core.bean.BeanUtil;
 import com.hmdp.dto.LoginFormDTO;
 import com.hmdp.dto.Result;
 import com.hmdp.dto.UserDTO;
-import com.hmdp.entity.User;
 import com.hmdp.entity.UserInfo;
 import com.hmdp.service.IUserInfoService;
 import com.hmdp.service.IUserService;
@@ -47,7 +45,6 @@ public class UserController {
      */
     @PostMapping("/code")
     public Result sendCode(@RequestParam("phone") String phone, HttpSession session) {
-        //
         return userService.saveCode(phone,session);
     }
 
@@ -57,7 +54,6 @@ public class UserController {
      */
     @PostMapping("/login")
     public Result login(@RequestBody LoginFormDTO loginForm){
-        //
         return userService.login(loginForm);
     }
 
@@ -67,7 +63,6 @@ public class UserController {
      */
     @PostMapping("/logout")
     public Result logout(HttpServletRequest request){
-        //
         String token = request.getHeader("authorization");
         cacheService.delete(RedisConstants.LOGIN_USER_KEY+token);
         return Result.ok();
