@@ -82,7 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             //注册
             user = registerUser(phone);
         }
-        //TODO 保存用户信息到redis
+        //保存用户信息到redis
         String token = RandomUtil.randomString(10);
 
         UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
