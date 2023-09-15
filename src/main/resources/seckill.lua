@@ -3,6 +3,8 @@
 local voucherId = ARGV[1]
 -- 1.2 用户id
 local userId = ARGV[2]
+-- 1.3 订单id
+local orderId = ARGV[3]
 
 -- 2.数据key
 -- 2.1 库存key
@@ -18,12 +20,14 @@ if(tonumber(redis.call('get',stockkey)) <= 0) then
 end
 -- 3.2判断用户是否下单 SISMEMBER orderkey userId
 if(redis.call('sismember', orderkey,userId) == 1) then
-    -- 3.3存在，说明是重复下单，返回2
-    return 2
+-- 3.3存在，说明是重复下单，返回2
+return 2
 end
 -- 3.4 扣库存 incrby stockkey -1
 redis.call('incrby',stockkey,-1)
 -- 3.5 下单(保存用户) sadd orderkey userId
 redis.call('sadd',orderkey,userId)
+-- 3.6 发送消息到队列中， XADD stream.orders * k1 v1 k2 v2
+redis.call('xadd','stream.orders','*','userId',userId,'voucherId',voucherId,'id',orderId)
 
 return 0
