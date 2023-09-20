@@ -20,4 +20,7 @@ public interface IUserService extends IService<User> {
     Result saveCode(String phone, HttpSession session);
 
     Result login(LoginFormDTO loginForm);
+
+    Result queryById(Long userId);
+
 }

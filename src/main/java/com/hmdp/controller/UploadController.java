@@ -1,25 +1,45 @@
 package com.hmdp.controller;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import com.hmdp.dto.Result;
 import com.hmdp.utils.SystemConstants;
+import com.lkc.file.service.FileStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
 @Slf4j
 @RestController
 @RequestMapping("upload")
 public class UploadController {
+    @Resource
+    FileStorageService fileStorageService;
 
     @PostMapping("blog")
-    public Result uploadImage(@RequestParam("file") MultipartFile image) {
+    public Result uploadImage(@RequestParam("file") MultipartFile image) throws IOException {
         try {
+            //获取原始文件名称
+            String originalFilename = image.getOriginalFilename();
+            //获取文件后缀
+            String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+            //上传的文件名
+            String fileName = UUID.randomUUID().toString(true) + suffix;
+            //返回的图片地址
+            String fileUrl = fileStorageService.uploadImgFile(null, fileName, image.getInputStream());
+
+            log.debug("文件上传成功，{}", fileUrl);
+
+            return Result.ok(fileUrl);
+        } catch (IOException e) {
+            throw new RuntimeException("文件上传失败", e);
+        }
+        /*try {
             // 获取原始文件名称
             String originalFilename = image.getOriginalFilename();
             // 生成新文件名
@@ -31,16 +51,15 @@ public class UploadController {
             return Result.ok(fileName);
         } catch (IOException e) {
             throw new RuntimeException("文件上传失败", e);
-        }
+        }*/
     }
 
     @GetMapping("/blog/delete")
-    public Result deleteBlogImg(@RequestParam("name") String filename) {
-        File file = new File(SystemConstants.IMAGE_UPLOAD_DIR, filename);
-        if (file.isDirectory()) {
-            return Result.fail("错误的文件名称");
-        }
-        FileUtil.del(file);
+    public Result deleteBlogImg(@RequestParam("name") String filename){
+        String[] split = filename.split("http:");
+        filename = "http:" + split[1];
+        //delete方法参数为要删除的图片全路径
+        fileStorageService.delete(filename);
         return Result.ok();
     }
 

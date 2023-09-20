@@ -10,6 +10,7 @@ import com.hmdp.service.IUserService;
 import com.hmdp.utils.CacheService;
 import com.hmdp.utils.RedisConstants;
 import com.hmdp.utils.UserHolder;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,7 @@ public class UserController {
     @Resource
     private IUserInfoService userInfoService;
 
+    @Getter
     @Autowired
     CacheService cacheService;
 
@@ -88,4 +90,9 @@ public class UserController {
         // 返回
         return Result.ok(info);
     }
+    @GetMapping("/{id}")
+    public Result queryById(@PathVariable("id") Long userId){
+        return userService.queryById(userId);
+    }
+
 }

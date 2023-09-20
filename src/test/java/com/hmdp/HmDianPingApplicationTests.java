@@ -1,18 +1,26 @@
 package com.hmdp;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.json.JSONUtil;
 import com.hmdp.dto.UserDTO;
 import com.hmdp.entity.Shop;
+import com.hmdp.entity.User;
+import com.hmdp.mapper.UserMapper;
 import com.hmdp.service.impl.ShopServiceImpl;
 import com.hmdp.utils.*;
+import com.lkc.file.service.FileStorageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.DefaultTypedTuple;
+import org.springframework.data.redis.core.ZSetOperations;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Resource;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,6 +29,14 @@ import java.util.concurrent.TimeUnit;
 
 @SpringBootTest(classes = HmDianPingApplication.class)
 class HmDianPingApplicationTests {
+
+    @Test
+    void T2() {
+        String a = "ajkdfs.jpg";
+        String string = UUID.randomUUID().toString(true);
+        String substring = a.substring(a.lastIndexOf("."));
+        System.out.println(string + substring);
+    }
 
     @Autowired
     CacheService cacheService;
@@ -68,6 +84,7 @@ class HmDianPingApplicationTests {
 
 
     }
+
     @Autowired
     CacheClient cacheClient;
 
@@ -100,7 +117,38 @@ class HmDianPingApplicationTests {
         System.out.println("time = " + (end - start));
     }
 
+    @Resource
+    FileStorageService fileStorageService;
     @Test
-    void testInt() {
+    void testminio() throws FileNotFoundException {
+        FileInputStream fileInputStream = new FileInputStream("D:\\reggie8.jpg");
+        String utl = fileStorageService.uploadImgFile(null, "reggie8.jpg", fileInputStream);
+        System.out.println(utl);
+    }
+
+    @Test
+    void testminio1() throws InterruptedException {
+        //zset
+        String str = String.valueOf(new Date().getTime());
+        System.out.println("str = " + str);
+        Double valueOf = Double.valueOf(str);
+        System.out.println("double = " + valueOf);
+
+        DefaultTypedTuple typedTuple1 = new DefaultTypedTuple("1",Double.valueOf(String.valueOf(new Date().getTime())));
+        Thread.sleep(20);
+        //DefaultTypedTuple typedTuple2 = new DefaultTypedTuple("4",Double.valueOf(String.valueOf(new Date().getTime())));
+        Set<ZSetOperations.TypedTuple<String>> set = new HashSet<>();
+        set.add(typedTuple1);
+        Long l = cacheService.zAdd(RedisConstants.BLOG_LIKED_KEY+"9", set);
+        System.out.println("l = " + l);
+    }
+
+    @Autowired
+    UserMapper userMapper;
+    @Test
+    void testminio2() {
+        Set<String> set = cacheService.sIntersect(RedisConstants.FOLLOW_USER_KEY + "1012", RedisConstants.FOLLOW_USER_KEY + "1013");
+
+        System.out.println(set);
     }
 }
